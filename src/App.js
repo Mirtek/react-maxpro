@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect, withRouter } from "react-router-dom";
 import PropTypes from 'prop-types';
+import Profile from './Profile.js'
 
 import NewsList from './NewsList.js';
 import Home from './Home.js';
@@ -38,6 +39,7 @@ class App extends Component {
     return (
       <Router>
         <div>
+          <AuthButton/>
           <nav>
             <ul>
               <li>
@@ -46,13 +48,18 @@ class App extends Component {
               <li>
                 <Link to="/news/">NewsList</Link>
               </li>
+              <li>
+                <Link to="/profile/">Profile</Link>
+              </li>
+
             </ul>
           </nav>
-          <Route path="/" exact component={Home} />
+          <PrivateRoute path="/profile/" exact component={Profile} />
           <Route 
             path="/news/" 
             render={ (props) => <NewsList {...props} newsList={this.state.newsList} /> }
           />
+          <Route path="/login/" component={Login} />
         </div>
       </Router> 
     );
@@ -62,3 +69,65 @@ class App extends Component {
 
 
 export default App;
+
+
+
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    fakeAuth.isAuthenticated === true
+      ? <Component {...props} />
+      : <Redirect to='/login' />
+  )} />
+)
+
+const fakeAuth = {
+  isAuthenticated: false,
+  authenticate(cb) {
+    this.isAuthenticated = true
+    setTimeout(cb, 100) // fake async
+  },
+  signout(cb) {
+    this.isAuthenticated = false
+    setTimeout(cb, 100) // fake async
+  }
+}
+
+export class Login extends React.Component {
+  state = {
+    redirectToReferrer: false
+  }
+  login = () => {
+    fakeAuth.authenticate(() => {
+      this.setState(() => ({
+        redirectToReferrer: true
+      }))
+    })
+  }
+  render() {
+    const { redirectToReferrer } = this.state
+
+    if (redirectToReferrer === true) {
+      return <Redirect to='/profile/' />
+    }
+
+    return (
+      <div><h2>Login page</h2>
+      <p>please press login</p>
+      <button onClick={this.login}>Log in</button>
+      </div>
+    );
+  }
+}
+
+const AuthButton = withRouter(({ history }) => (
+  fakeAuth.isAuthenticated ? (
+    <p>
+      Welcome! <button onClick={() => {
+        fakeAuth.signout(() => history.push('/'))
+      }}>Sign out</button>
+    </p>
+  ) : (
+    <p>You are not logged in.</p>
+  )
+))
