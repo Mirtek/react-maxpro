@@ -97,14 +97,16 @@ const fakeAuth = {
 export class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: '', value2: ''};
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChangeLogin = this.handleChangeLogin.bind(this);
     this.handleChangePass = this.handleChangePass.bind(this);
   }
   state = {
-    redirectToReferrer: false
+    redirectToReferrer: false,
+    loginData: '', 
+    passwordData: '', 
+    messageIncorrectLoginPass: ''
   }
   login = () => {
     fakeAuth.authenticate(() => {
@@ -114,16 +116,20 @@ export class Login extends React.Component {
     })
   }
   handleSubmit = (event) => {
-    if (this.state.value == 'admin' && this.state.value2 == '12345') {
+    if (this.state.loginData == 'admin' && this.state.passwordData == '12345') {
       this.login();
+    } else {
+      this.setState({
+        messageIncorrectLoginPass: 'Имя пользователя или пароль введены не верно'
+      });
     }
     event.preventDefault();
   }
   handleChangeLogin(event) {
-    this.setState({value: event.target.value});
+    this.setState({loginData: event.target.value});
   }
   handleChangePass(event) {
-    this.setState({value2: event.target.value});
+    this.setState({passwordData: event.target.value});
   }
   render() {
     const { redirectToReferrer } = this.state
@@ -136,10 +142,11 @@ export class Login extends React.Component {
       <div><h2>Login page</h2>
       <p>Please sign in</p>
       <form onSubmit={this.handleSubmit}>
-      <label htmlFor="login">login<input type="text" value={this.state.value} onChange={this.handleChangeLogin} id="login" name="login" /></label>
-      <label htmlFor="password">pass<input type="text" id="password" value={this.state.value2} onChange={this.handleChangePass} name="pass" /></label>
+      <label htmlFor="login">login<input type="text" value={this.state.loginData} onChange={this.handleChangeLogin} id="login" name="login" /></label>
+      <label htmlFor="password">pass<input type="text" id="password" value={this.state.passwordData} onChange={this.handleChangePass} name="pass" /></label>
       <input type="submit" value="Log in" />
       </form>
+      <p>{this.state.messageIncorrectLoginPass}</p>
       </div>
     );
   }
