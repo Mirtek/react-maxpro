@@ -1,10 +1,14 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## О себе
 
+Пхп разработчик, перидоически пытаюсь ворватся в реакт-фронтенд, но что-то тяжко.
 
-##clone https://github.com/Mirtek/react-maxpro.git
+## Про приложение
 
-###npm install
+- [x] выполнен базовый функционал
+- [ ] redux
+- [ ] оформление
+- [ ] demo (ссылка)
 
-###npm run start
+## Вопросы
 
-###Hope for the best :)
+Что я совсем неправильно делаю? Как вьехать в чертов Redux (сложные оч концепты!)?
